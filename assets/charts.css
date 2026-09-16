@@ -1,0 +1,75 @@
+/* waypoint-charts: tokens by role, so light/dark swap in one place. */
+.wp-chart {
+    --wp-chart-surface: #fcfcfb;
+    --wp-chart-text: #52514e;
+    --wp-chart-muted: #898781;
+    --wp-chart-grid: #e1e0d9;
+    --wp-chart-axis: #c3c2b7;
+    --wp-chart-border: rgba(11, 11, 11, 0.10);
+    --wp-chart-series-1: #2a78d6; --wp-chart-series-2: #eb6834; --wp-chart-series-3: #1baf7a; --wp-chart-series-4: #eda100;
+    --wp-chart-series-5: #e87ba4; --wp-chart-series-6: #008300; --wp-chart-series-7: #4a3aa7; --wp-chart-series-8: #e34948;
+    margin: 0 0 24px; padding: 0; color: var(--wp-chart-text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 14px;
+}
+@media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .wp-chart {
+        --wp-chart-surface: #1a1a19; --wp-chart-text: #c3c2b7; --wp-chart-muted: #898781;
+        --wp-chart-grid: #2c2c2a; --wp-chart-axis: #383835; --wp-chart-border: rgba(255, 255, 255, 0.10);
+        --wp-chart-series-1: #3987e5; --wp-chart-series-2: #d95926; --wp-chart-series-3: #199e70; --wp-chart-series-4: #c98500;
+        --wp-chart-series-5: #d55181; --wp-chart-series-6: #008300; --wp-chart-series-7: #9085e9; --wp-chart-series-8: #e66767;
+    }
+}
+:root[data-theme="dark"] .wp-chart {
+    --wp-chart-surface: #1a1a19; --wp-chart-text: #c3c2b7; --wp-chart-muted: #898781;
+    --wp-chart-grid: #2c2c2a; --wp-chart-axis: #383835; --wp-chart-border: rgba(255, 255, 255, 0.10);
+    --wp-chart-series-1: #3987e5; --wp-chart-series-2: #d95926; --wp-chart-series-3: #199e70; --wp-chart-series-4: #c98500;
+    --wp-chart-series-5: #d55181; --wp-chart-series-6: #008300; --wp-chart-series-7: #9085e9; --wp-chart-series-8: #e66767;
+}
+
+.wp-chart-title { font-weight: 600; margin: 0 0 8px; color: var(--wp-chart-text); }
+.wp-chart-plot { position: relative; }
+.wp-chart-svg { display: block; width: 100%; height: auto; max-width: 100%; }
+.wp-chart-svg text { font-family: inherit; font-size: 12px; font-variant-numeric: tabular-nums; }
+.wp-chart-grid { stroke: var(--wp-chart-grid); }
+.wp-chart-axis, .wp-chart-crosshair { stroke: var(--wp-chart-axis); }
+.wp-chart-tick { fill: var(--wp-chart-muted); }
+.wp-chart-label { fill: var(--wp-chart-text); font-weight: 600; }
+
+.wp-chart-series-1 { --wp-series: var(--wp-chart-series-1); } .wp-chart-series-2 { --wp-series: var(--wp-chart-series-2); }
+.wp-chart-series-3 { --wp-series: var(--wp-chart-series-3); } .wp-chart-series-4 { --wp-series: var(--wp-chart-series-4); }
+.wp-chart-series-5 { --wp-series: var(--wp-chart-series-5); } .wp-chart-series-6 { --wp-series: var(--wp-chart-series-6); }
+.wp-chart-series-7 { --wp-series: var(--wp-chart-series-7); } .wp-chart-series-8 { --wp-series: var(--wp-chart-series-8); }
+.wp-chart-bar { fill: var(--wp-series); transition: filter 120ms; }
+.wp-chart-line { stroke: var(--wp-series); fill: none; }
+.wp-chart-marker { fill: var(--wp-series); stroke: var(--wp-chart-surface); }
+.wp-chart-key rect, .wp-chart-key circle { fill: var(--wp-series); }
+.wp-chart-key line { stroke: var(--wp-series); }
+.wp-chart-mark.is-active, .wp-chart-marker.is-active { filter: brightness(1.12); }
+.wp-chart-marker.is-active { r: 6; }
+.wp-chart-crosshair { visibility: hidden; }
+.wp-chart-crosshair.is-active { visibility: visible; }
+.wp-chart-hit { fill: transparent; outline: none; cursor: default; }
+.wp-chart-hit:focus-visible { stroke: var(--wp-chart-series-1); stroke-width: 1; stroke-dasharray: 2 2; }
+
+.wp-chart-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 8px 0 0; padding: 0; font-size: 13px; }
+.wp-chart-legend li { display: inline-flex; align-items: center; gap: 6px; }
+
+.wp-chart-details { margin-top: 8px; font-size: 13px; }
+.wp-chart-details summary { cursor: pointer; color: var(--wp-chart-muted); }
+.wp-chart-table { border-collapse: collapse; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.wp-chart-table caption { text-align: left; font-weight: 600; padding: 4px 0; }
+.wp-chart-table th, .wp-chart-table td { padding: 4px 10px; border-bottom: 1px solid var(--wp-chart-grid); text-align: right; }
+.wp-chart-table th[scope="row"], .wp-chart-table thead th:first-child { text-align: left; }
+
+.wp-chart-tooltip {
+    position: absolute; pointer-events: none; z-index: 2; min-width: 120px;
+    background: var(--wp-chart-surface); color: var(--wp-chart-text); border: 1px solid var(--wp-chart-border);
+    border-radius: 6px; padding: 8px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.wp-chart-tooltip[hidden] { display: none; }
+.wp-chart-tooltip-label { color: var(--wp-chart-muted); margin-bottom: 4px; }
+.wp-chart-tooltip-row { display: flex; align-items: center; gap: 8px; }
+.wp-chart-tooltip-row strong { font-variant-numeric: tabular-nums; }
+.wp-chart-tooltip-row span:last-child { color: var(--wp-chart-muted); }
+.wp-chart-tooltip-key { display: inline-block; width: 14px; height: 0; border-top: 2px solid var(--wp-series); }
+.wp-chart-bar .wp-chart-tooltip-key { width: 10px; height: 10px; border: 0; border-radius: 2px; background: var(--wp-series); }
