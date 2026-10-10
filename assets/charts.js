@@ -98,6 +98,5 @@
             next.focus();
         }
     });
-    Waypoint.onNavigated(takeOver);
     takeOver();
 })();

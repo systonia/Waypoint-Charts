@@ -4,7 +4,7 @@ namespace Waypoint\Charts\Tests;
 
 use Waypoint\Attributes\{Controller, Get};
 use Waypoint\Charts\Chart;
-use Waypoint\Http\{Request, View};
+use Waypoint\Http\View;
 
 #[Controller]
 class ChartsController
@@ -16,8 +16,8 @@ class ChartsController
     }
 
     #[Get('/page')]
-    public function page(Request $req): View
+    public function page(): View
     {
-        return new View('Page', ['chart' => Chart::bar()->title('Inline')->labels(['a'])->series('S', [1])], partial: $req->acceptPartial);
+        return new View('Page', ['chart' => Chart::bar()->title('Inline')->labels(['a'])->series('S', [1])]);
     }
 }
