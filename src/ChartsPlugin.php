@@ -20,9 +20,9 @@ final class ChartsPlugin extends PluginBase implements ViewHelper, Renderer, Cli
         return 'charts';
     }
 
-    public function boot(Container $container): void
+    public function boot(Container $container, ChartsOptions $options): void
     {
-        $this->renderer = new SvgRenderer($container->get(ChartsOptions::class));
+        $this->renderer = new SvgRenderer($options);
         $container->set($this->renderer);
     }
 
