@@ -2,7 +2,7 @@
     "name": "systonia/waypoint-charts",
     "description": "Server-rendered SVG charts for Waypoint: bar and line charts with a data table, legend and accessible markup, tooltips as a progressive enhancement.",
     "type": "library",
-    "license": "MIT",
+    "license": ["MIT", "Apache-2.0"],
     "require": {
         "php": ">=8.5",
         "systonia/waypoint": "^1.4.1"
