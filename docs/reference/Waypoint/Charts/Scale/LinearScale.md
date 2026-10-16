@@ -64,7 +64,7 @@ Bounds around [$lo, $hi] on clean tick values, about $ticks intervals; $includeZ
 public function ticks(): array
 ```
 
-**Returns** `list<float>` — Every tick from min to max inclusive.
+**Returns** `list<float>`: Every tick from min to max inclusive.
 
 ### position()
 

@@ -28,10 +28,10 @@ public function __construct(
 
 **Parameters**
 
-- `$count` `int` — Number of slots.
-- `$start` `float` — Position of the first slot's left edge.
-- `$width` `float` — Width of all slots together.
-- `$padding` `float` — Share of a slot (0 to 1) left empty, split between both sides.
+- `$count` `int`: Number of slots.
+- `$start` `float`: Position of the first slot's left edge.
+- `$width` `float`: Width of all slots together.
+- `$padding` `float`: Share of a slot (0 to 1) left empty, split between both sides.
 
 ### band()
 

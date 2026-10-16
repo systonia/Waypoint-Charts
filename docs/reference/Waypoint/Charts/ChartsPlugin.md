@@ -47,7 +47,7 @@ public function boot(\Waypoint\Container $container, \Waypoint\Charts\ChartsOpti
 public function hooks(): array
 ```
 
-**Returns** `list<object>` — Instances of Endpoint, Fallback, RouteAttributeCompiler, Guard, ResponseHook, ArgumentBinder, Renderer, OpenApiExtension, ViewHelper, ClientAsset.
+**Returns** `list<object>`: Instances of Endpoint, Fallback, RouteAttributeCompiler, Guard, ResponseHook, ArgumentBinder, Renderer, OpenApiExtension, ViewHelper, ClientAsset.
 
 ### helpers()
 
@@ -55,7 +55,7 @@ public function hooks(): array
 public function helpers(): array
 ```
 
-**Returns** `array<string, callable>` — name => callable
+**Returns** `array<string, callable>`: name => callable
 
 ### supports()
 
@@ -87,4 +87,4 @@ public function render(mixed $result, \Waypoint\Http\Request $req, \Waypoint\Htt
 public function assets(): array
 ```
 
-**Returns** `array<string, string>` — {logical filename ending in .css or .js => absolute source path}
+**Returns** `array<string, string>`: {logical filename ending in .css or .js => absolute source path}

@@ -84,11 +84,11 @@ Values of the same label and series add up; a label a series has no row for stay
 
 **Parameters**
 
-- `$rows` `iterable<array<string, mixed>|object>` — Arrays or objects with the named keys or properties.
-- `$x` `string` — Column with the label (the x position).
-- `$y` `string` — Column with the value.
-- `$series` `string|null` — Column that splits rows into series; null for one series with an empty name.
-- `$type` `string` — Chart::BAR or Chart::LINE.
+- `$rows` `iterable<array<string, mixed>|object>`: Arrays or objects with the named keys or properties.
+- `$x` `string`: Column with the label (the x position).
+- `$y` `string`: Column with the value.
+- `$series` `string|null`: Column that splits rows into series; null for one series with an empty name.
+- `$type` `string`: Chart::BAR or Chart::LINE.
 
 **Returns** [`Chart`](Chart.md)
 
@@ -128,7 +128,7 @@ public function labels(array $labels): \Waypoint\Charts\Chart
 
 **Parameters**
 
-- `$labels` `list<string>` — One per x position, shared by every series.
+- `$labels` `list<string>`: One per x position, shared by every series.
 
 **Returns** [`Chart`](Chart.md)
 
@@ -141,7 +141,7 @@ public function series(string $name, array $values): \Waypoint\Charts\Chart
 **Parameters**
 
 - `$name` `string`
-- `$values` `list<float|int|null>` — One per label; null leaves a gap. At most eight series.
+- `$values` `list<float|int|null>`: One per label; null leaves a gap. At most eight series.
 
 **Returns** [`Chart`](Chart.md)
 

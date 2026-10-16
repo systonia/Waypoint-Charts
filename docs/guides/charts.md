@@ -131,7 +131,7 @@ Values are shown with `$decimals` decimals. Axis ticks use more when the step be
 
 ## The value axis
 
-The axis always includes zero, so bars start at a common baseline and a line's height can be compared with it. Its ends and ticks fall on round numbers — steps of 1, 2 or 5 times a power of ten, about five of them — and grow with the data: values from 120 to 165 give an axis from 0 to 200 in steps of 50.
+The axis always includes zero, so bars start at a common baseline and a line's height can be compared with it. Its ends and ticks fall on round numbers (steps of 1, 2 or 5 times a power of ten, about five of them) and grow with the data: values from 120 to 165 give an axis from 0 to 200 in steps of 50.
 
 Two series with different units or very different ranges do not belong on one value axis. Draw two charts.
 
