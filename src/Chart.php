@@ -5,16 +5,25 @@ namespace Waypoint\Charts;
 use InvalidArgumentException;
 
 /**
- * What to draw, built fluently and rendered by SvgRenderer:
+ * A bar or line chart: labels, up to eight series and how to show them, built fluently.
  *
- *   Chart::bar()->title('Revenue 2026')->labels(['Jan', 'Feb'])->series('Domestic', [120, 140])->unit('€')
+ * ```php
+ * $chart = Chart::bar()
+ *     ->title('Revenue 2026')
+ *     ->labels(['Jan', 'Feb', 'Mar'])
+ *     ->series('Domestic', [120, 140, 165])
+ *     ->unit('€');
+ * ```
  *
  * Return it from a route to get an image/svg+xml response, or pass it to
- * `$this->chart($chart)` inside a view.
+ * `$this->chart($chart)` inside a view. SvgRenderer draws it.
  */
 final class Chart
 {
+    /** Type of a bar chart, for fromRows() and type(). */
     public const BAR = 'bar';
+
+    /** Type of a line chart, for fromRows() and type(). */
     public const LINE = 'line';
 
     private ?string $title = null;
@@ -38,21 +47,30 @@ final class Chart
     {
     }
 
+    /** A new bar chart: one bar per series at every label, grouped side by side or stacked(). */
     public static function bar(): self
     {
         return new self(self::BAR);
     }
 
+    /** A new line chart: one line per series through its values, with markers by default. */
     public static function line(): self
     {
         return new self(self::LINE);
     }
 
     /**
-     * From query rows: $x names the label column, $y the value column, $series (optional) the column
-     * that splits rows into series. Values of the same label and series add up.
+     * A chart from query rows: labels in order of first appearance, one series per distinct
+     * value of the $series column.
      *
-     * @param iterable<array<string, mixed>|object> $rows
+     * Values of the same label and series add up; a label a series has no row for stays a gap
+     * (null). A value that is not numeric counts as 0.
+     *
+     * @param iterable<array<string, mixed>|object> $rows Arrays or objects with the named keys or properties.
+     * @param string $x Column with the label (the x position).
+     * @param string $y Column with the value.
+     * @param string|null $series Column that splits rows into series; null for one series with an empty name.
+     * @param string $type Chart::BAR or Chart::LINE.
      */
     public static function fromRows(iterable $rows, string $x, string $y, ?string $series = null, string $type = self::BAR): self
     {
@@ -76,6 +94,7 @@ final class Chart
         return $chart;
     }
 
+    /** Caption above the chart, the SVG's <title> and the table's <caption>. */
     public function title(string $title): self
     {
         $this->title = $title;
@@ -128,12 +147,14 @@ final class Chart
         return $this;
     }
 
+    /** Show the data table under this chart; false hides it even when ChartsOptions::$table is on. */
     public function withTable(bool $table = true): self
     {
         $this->table = $table;
         return $this;
     }
 
+    /** Drawing size in CSS pixels for this chart, at least 120 × 80; ChartsOptions' size otherwise. */
     public function size(int $width, int $height): self
     {
         $this->width = max(120, $width);
@@ -141,63 +162,81 @@ final class Chart
         return $this;
     }
 
+    /** Chart::BAR or Chart::LINE. */
     public function type(): string
     {
         return $this->type;
     }
 
+    /** The title, or null when none was set. */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /** The screen-reader sentence, or null when the renderer generates one. */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /** @return list<string> */
+    /**
+     * The labels, one per x position.
+     *
+     * @return list<string>
+     */
     public function getLabels(): array
     {
         return $this->labels;
     }
 
-    /** @return list<array{name: string, values: list<float|null>}> */
+    /**
+     * The series in the order they were added, values as floats and gaps as null.
+     *
+     * @return list<array{name: string, values: list<float|null>}>
+     */
     public function getSeries(): array
     {
         return $this->series;
     }
 
+    /** The unit from unit(), '' when none. */
     public function getUnit(): string
     {
         return $this->unit;
     }
 
+    /** Decimals values are shown with. */
     public function getDecimals(): int
     {
         return $this->decimals;
     }
 
+    /** True for a bar chart with stacked(); a line chart never stacks. */
     public function isStacked(): bool
     {
         return $this->stacked && $this->type === self::BAR;
     }
 
+    /** Whether a line chart draws a marker at every point. */
     public function hasMarkers(): bool
     {
         return $this->markers;
     }
 
+    /** Whether this chart asks for its data table (ChartsOptions::$table can still turn it off). */
     public function hasTable(): bool
     {
         return $this->table;
     }
 
+    /** Width from size(), or null for ChartsOptions::$width. */
     public function getWidth(): ?int
     {
         return $this->width;
     }
 
+    /** Height from size(), or null for ChartsOptions::$height. */
     public function getHeight(): ?int
     {
         return $this->height;

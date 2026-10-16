@@ -5,8 +5,14 @@ namespace Waypoint\Charts\Scale;
 /** A value axis with "nice" bounds and ticks stepping in 1, 2, 5 × 10^n. */
 final class LinearScale
 {
-    private function __construct(public readonly float $min, public readonly float $max, public readonly float $step)
-    {
+    private function __construct(
+        /** Lowest tick, the bottom of the axis. */
+        public readonly float $min,
+        /** Highest tick, the top of the axis. */
+        public readonly float $max,
+        /** Distance between two ticks. */
+        public readonly float $step,
+    ) {
     }
 
     /** Bounds around [$lo, $hi] on clean tick values, about $ticks intervals; $includeZero anchors the baseline. */

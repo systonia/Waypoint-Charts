@@ -27,6 +27,10 @@ final class SvgRenderer
     {
     }
 
+    /**
+     * The chart for an HTML page: a <figure> with caption, the SVG, a legend for two or more
+     * series and the data table in a <details>. Every text is escaped.
+     */
     public function render(Chart $chart): string
     {
         $series = $chart->getSeries();
@@ -45,6 +49,10 @@ final class SvgRenderer
         return $html . '</figure>';
     }
 
+    /**
+     * A bare <svg> document with its own dark-mode styles, for image/svg+xml responses, <img>
+     * tags and files. It has no caption, legend or table.
+     */
     public function renderStandalone(Chart $chart): string
     {
         return $this->svg($chart, self::id($chart), true);
