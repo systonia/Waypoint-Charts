@@ -1,1 +1,1 @@
-<div><?= $this->chart($model["chart"]) ?></div><?= $this->pluginAssetTags() ?>
+<div>{{ $this->chart($model["chart"]) }}</div>{{ $this->pluginAssetTags() }}

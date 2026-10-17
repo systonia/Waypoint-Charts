@@ -72,7 +72,7 @@ public static function fromRows(
     string $x,
     string $y,
     ?string $series = null,
-    string $type = \self::BAR,
+    string $type = self::BAR,
 ): \Waypoint\Charts\Chart
 ```
 

@@ -6,7 +6,7 @@ order: 1
 
 Waypoint Charts draws bar and line charts on the server and sends them as SVG. A chart is a [`Chart`](reference/Waypoint/Charts/Chart.md) object built in PHP: labels along the x axis, up to eight series of values, a unit. The plugin turns it into markup in two places:
 
-- in a view, `<?= $this->chart($chart) ?>` renders a `<figure>` with the caption, the SVG, a legend and the data table;
+- in a view, `{{ $this->chart($chart) }}` renders a `<figure>` with the caption, the SVG, a legend and the data table;
 - returned from a route, the chart is the response, as `image/svg+xml`, for an `<img>` tag, a PDF or a file.
 
 The picture is complete without JavaScript: it prints, works in e-mails and in documents, and carries its numbers as a real HTML table. The plugin's script adds a tooltip, a crosshair on line charts and arrow-key navigation on top. Colors follow a fixed colorblind-safe order, and every chart has a light and a dark version.
@@ -86,9 +86,9 @@ $app->serve();
     <title>Reports</title>
 </head>
 <body>
-<main><?= $content ?></main>
-<?= $this->waypointJsTag() ?>
-<?= $this->pluginAssetTags() ?>
+<main>{{ $content }}</main>
+{{ $this->waypointJsTag() }}
+{{ $this->pluginAssetTags() }}
 </body>
 </html>
 ```
@@ -97,7 +97,7 @@ $app->serve();
 
 ```php
 <h1>Revenue</h1>
-<?= $this->chart($model['chart']) ?>
+{{ $this->chart($model['chart']) }}
 <p><img src="/reports/revenue.svg" alt="Revenue 2026 by month" width="640" height="320"></p>
 ```
 

@@ -25,11 +25,11 @@ public function dashboard(): View
 
 ```php
 <section class="card">
-    <?= $this->chart($model['signups']) ?>
+    {{ $this->chart($model['signups']) }}
 </section>
 ```
 
-The helper returns HTML, so it is printed as it is. It escapes every text that came from the chart (title, labels, series names, description) itself. The output is:
+The helper returns `Waypoint\Html`, so `{{ }}` prints it as it is. It escapes every text that came from the chart (title, labels, series names, description) itself. The output is:
 
 ```html
 <figure class="wp-chart wp-chart-line" wp-chart data-series="1">
@@ -52,9 +52,9 @@ The plugin ships `charts.css` and `charts.js`. Waypoint compiles them with conte
 
 ```php
 <body>
-<?= $content ?>
-<?= $this->waypointJsTag() ?>
-<?= $this->pluginAssetTags() ?>
+{{ $content }}
+{{ $this->waypointJsTag() }}
+{{ $this->pluginAssetTags() }}
 </body>
 ```
 

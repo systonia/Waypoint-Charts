@@ -25,7 +25,7 @@ $chart = Chart::bar()
     ->unit('€');
 ```
 
-- In a view: `<?= $this->chart($chart) ?>` renders a `<figure>` with caption, the SVG, a legend (two
+- In a view: `{{ $this->chart($chart) }}` renders a `<figure>` with caption, the SVG, a legend (two
   or more series) and the data table in a `<details>`.
 - From a route: `return $chart;` answers with `image/svg+xml` — use it as `<img src="/reports/revenue.svg">`
   or inside a PDF; the SVG carries its own dark-mode styles.
