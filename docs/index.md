@@ -17,7 +17,7 @@ The picture is complete without JavaScript: it prints, works in e-mails and in d
 composer require systonia/waypoint-charts
 ```
 
-The package needs PHP 8.5 and `systonia/waypoint` 0.6.4 or later in the 0.x line. Register the plugin before `attach()`:
+The package needs PHP 8.5 and `systonia/waypoint` 0.7.7 or later in the 0.x line. Register the plugin before `attach()`:
 
 ```php
 $app->plugin(new Waypoint\Charts\ChartsPlugin());
@@ -26,6 +26,8 @@ $app->plugin(new Waypoint\Charts\ChartsPlugin());
 The layout loads the plugin's stylesheet and script with `$this->pluginAssetTags()`, after `$this->waypointJsTag()`, because the script builds on `waypoint.js`.
 
 ## A first chart
+
+The examples in these docs come from Sonnenkorn, a made-up bakery and the [Waypoint example app](https://github.com/systonia/Waypoint-Bakery). Its back office shows the owner what the shop sold. The smallest version of that page is one controller, one chart and two views.
 
 `index.php`:
 
@@ -40,29 +42,28 @@ use Waypoint\Http\View;
 use Waypoint\Options\RendererOptions;
 use Waypoint\Waypoint;
 
-#[Controller('/reports')]
-final class ReportsController
+#[Controller('/sales')]
+final class SalesController
 {
     #[Get('')]
     public function page(): View
     {
-        return new View('Revenue', ['chart' => $this->revenue()]);
+        return new View('Sales', $this->week());
     }
 
-    #[Get('/revenue.svg')]
+    #[Get('/week.svg')]
     public function svg(): Chart
     {
-        return $this->revenue();
+        return $this->week();
     }
 
-    private function revenue(): Chart
+    private function week(): Chart
     {
         return Chart::bar()
-            ->title('Revenue 2026')
-            ->labels(['Jan', 'Feb', 'Mar'])
-            ->series('Domestic', [120, 140, 165])
-            ->series('Export', [40, 55, 70])
-            ->unit('€');
+            ->title('Sold this week')
+            ->labels(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+            ->series('Croissants', [84, 76, 91, 88, 102, 140])
+            ->series('Pretzels', [60, 58, 64, 61, 75, 96]);
     }
 }
 
@@ -72,7 +73,7 @@ $app->configure(function (RendererOptions $renderer) {
     $renderer->directory = __DIR__ . '/views';
     $renderer->layout = '_Layout.php';
 });
-$app->attach([ReportsController::class]);
+$app->attach([SalesController::class]);
 $app->serve();
 ```
 
@@ -83,7 +84,7 @@ $app->serve();
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Reports</title>
+    <title>Sonnenkorn</title>
 </head>
 <body>
 <main>{{ $content }}</main>
@@ -93,15 +94,23 @@ $app->serve();
 </html>
 ```
 
-`views/Revenue.php`:
+`views/Sales.php`:
 
 ```php
-<h1>Revenue</h1>
-{{ $this->chart($model['chart']) }}
-<p><img src="/reports/revenue.svg" alt="Revenue 2026 by month" width="640" height="320"></p>
+@model (Waypoint\Charts\Chart)
+
+<h1>
+    Sales
+</h1>
+{{ $this->chart($model) }}
+<p>
+    <img src="/sales/week.svg" alt="Croissants and pretzels sold this week" width="640" height="320">
+</p>
 ```
 
-Run it with `tenma index.php` (or `php -S localhost:8080 index.php`). `/reports` shows the chart twice: once as the interactive figure with legend, table and tooltips, once as a plain image loaded from `/reports/revenue.svg`, which answers with `Content-Type: image/svg+xml; charset=utf-8`.
+Run it with `tenma index.php` (or `php -S localhost:8080 index.php`). `/sales` shows the chart twice: once as the interactive figure with legend, table and tooltips, once as a plain image loaded from `/sales/week.svg`, which answers with `Content-Type: image/svg+xml; charset=utf-8`.
+
+The bakery itself builds its charts from the sales in Postgres with [`Chart::fromRows()`](guides/charts.md#charts-from-query-rows) and puts them on the page through a typed model; [Pages, images and the script](guides/rendering.md#in-a-view) shows that page.
 
 ## Overview
 

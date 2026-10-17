@@ -8,32 +8,51 @@ A [`Chart`](../reference/Waypoint/Charts/Chart.md) becomes markup in one of two 
 
 ## In a view
 
-The plugin adds the view helper `chart`. A controller passes the chart in the model, the view prints it:
+The plugin adds the view helper `chart`. A controller passes the chart in the model, the view prints it. The bakery's sales page puts its two charts into a view model (from `src/Controllers/BackofficeController.php`, shortened):
 
 ```php
-#[Get('/dashboard')]
-public function dashboard(): View
+#[Get('/sales')]
+#[Role('owner')]
+public function sales(): View
 {
-    return new View('Dashboard', [
-        'signups' => Chart::line()
-            ->title('Signups')
-            ->labels(['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
-            ->series('Signups', [12, 18, 9, 22, 30]),
-    ]);
+    $locale = $this->translator->locale();
+    return new View('Backoffice/Sales', new SalesPage(
+        revenue: Chart::fromRows($this->sales->revenueByDay(28, $locale), x: 'day', y: 'revenue')
+            ->title($this->translator->t('Revenue per day, last four weeks'))
+            ->unit('€'),
+        products: Chart::fromRows($this->sales->topProducts(28, $locale), x: 'product', y: 'quantity')
+            ->title($this->translator->t('Sold in the last four weeks'))
+            ->size(640, 280),
+        latest: $this->sheet('orders.html', $this->orders->recent(7)),
+    ), layout: '_Backoffice.php');
 }
 ```
 
+`SalesPage` is a readonly class with the properties `Chart $revenue`, `Chart $products` and the `Sheet $latest` of the [Export plugin](https://github.com/systonia/Waypoint-Export). The view, `views/Backoffice/Sales.php`, prints both charts side by side:
+
 ```php
-<section class="card">
-    {{ $this->chart($model['signups']) }}
-</section>
+@model (Bakery\Models\SalesPage)
+
+@section('title')
+    {{ $this->t('Sales') }}
+@endsection
+
+<h1 class="mb-6 text-2xl font-semibold">
+    {{ $this->t('Sales') }}
+</h1>
+<div class="grid gap-8 lg:grid-cols-2">
+    <section>{{ $this->chart($model->revenue) }}</section>
+    <section>{{ $this->chart($model->products) }}</section>
+</div>
 ```
+
+The titles come translated from the controller; `$this->t()` is the [I18n plugin](https://github.com/systonia/Waypoint-I18n).
 
 The helper returns `Waypoint\Html`, so `{{ }}` prints it as it is. It escapes every text that came from the chart (title, labels, series names, description) itself. The output is:
 
 ```html
-<figure class="wp-chart wp-chart-line" wp-chart data-series="1">
-  <figcaption class="wp-chart-title">Signups</figcaption>
+<figure class="wp-chart wp-chart-bar" wp-chart data-series="1">
+  <figcaption class="wp-chart-title">Revenue per day, last four weeks</figcaption>
   <div class="wp-chart-plot"><svg …>…</svg></div>
   <details class="wp-chart-details">
     <summary>Show data as table</summary>
@@ -70,16 +89,15 @@ The tooltip reads its numbers from the chart's data table, as text, so picture, 
 
 ## As an image
 
-A route that returns a `Chart` answers with the chart as an SVG document:
+A route that returns a `Chart` answers with the chart as an SVG document. The bakery has no such route; one on its `BackofficeController` (`#[Controller('/backoffice')]`, `#[Authenticated]`) would serve the revenue chart as an image, for the screen in the bakery or a printout:
 
 ```php
-#[Get('/reports/revenue.svg')]
+#[Get('/sales/revenue.svg')]
+#[Role('owner')]
 public function revenueSvg(): Chart
 {
-    return Chart::bar()
-        ->title('Revenue 2026')
-        ->labels(['Jan', 'Feb', 'Mar'])
-        ->series('Domestic', [120, 140, 165])
+    return Chart::fromRows($this->sales->revenueByDay(28, $this->translator->locale()), x: 'day', y: 'revenue')
+        ->title($this->translator->t('Revenue per day, last four weeks'))
         ->unit('€');
 }
 ```
@@ -91,18 +109,19 @@ Content-Type: image/svg+xml; charset=utf-8
 <svg xmlns="http://www.w3.org/2000/svg" class="wp-chart-svg" viewBox="0 0 640 320" width="640" height="320" role="img" …>
 ```
 
-Use it wherever an image goes: `<img src="/reports/revenue.svg" alt="…">`, a PDF renderer, a download. The standalone SVG has the title and description but no caption, legend or table, and it needs no stylesheet: its own `<style>` switches to the dark palette under `prefers-color-scheme: dark`.
+Use it wherever an image goes: `<img src="/backoffice/sales/revenue.svg" alt="…">`, a PDF renderer, a download. The standalone SVG has the title and description but no caption, legend or table, and it needs no stylesheet: its own `<style>` switches to the dark palette under `prefers-color-scheme: dark`.
 
 Give the `<img>` an `alt` text; an image's inner `<title>` is not what screen readers announce for it.
 
-The route can take parameters like any other, for example a year in the path:
+The route can take parameters like any other, for example the number of days in the path:
 
 ```php
-#[Get('/reports/{year}/revenue.svg')]
-public function revenueForYear(int $year): Chart
+#[Get('/sales/{days}/revenue.svg')]
+#[Role('owner')]
+public function revenueForDays(int $days): Chart
 {
-    return Chart::fromRows($this->orders->revenueByMonth($year), x: 'month', y: 'revenue')
-        ->title("Revenue $year")
+    return Chart::fromRows($this->sales->revenueByDay(min($days, 366), $this->translator->locale()), x: 'day', y: 'revenue')
+        ->title($this->translator->t('Revenue per day'))
         ->unit('€');
 }
 ```
@@ -115,14 +134,14 @@ The plugin registers its [`SvgRenderer`](../reference/Waypoint/Charts/SvgRendere
 use Waypoint\Attributes\Inject;
 use Waypoint\Charts\{Chart, SvgRenderer};
 
-final class WeeklyReportMail
+final class WeeklySalesMail
 {
     #[Inject]
     private SvgRenderer $charts;
 
     public function html(Chart $chart): string
     {
-        return '<p>Your weekly report:</p>' . $this->charts->render($chart->withTable(false));
+        return '<p>The sales of the last week:</p>' . $this->charts->render($chart->withTable(false));
     }
 }
 ```
@@ -135,7 +154,7 @@ final class WeeklyReportMail
 `renderStandalone()` also writes files:
 
 ```php
-file_put_contents(__DIR__ . '/var/revenue.svg', $app->get(SvgRenderer::class)->renderStandalone($chart));
+file_put_contents(__DIR__ . '/var/sales-week.svg', $app->get(SvgRenderer::class)->renderStandalone($chart));
 ```
 
 ## Accessibility
@@ -143,7 +162,7 @@ file_put_contents(__DIR__ . '/var/revenue.svg', $app->get(SvgRenderer::class)->r
 Every chart is readable without seeing it:
 
 - The SVG has `role="img"`, a `<title>` (the chart's title, or `Chart`) and a `<desc>` with the [description](charts.md#the-description).
-- Every x position is a focusable area whose `aria-label` reads the label and all values, such as `Feb: Domestic 140 €, Export 55 €`.
+- Every x position is a focusable area whose `aria-label` reads the label and all values, such as `Tue: Croissants 76, Pretzels 58`.
 - The data table under the chart has a caption, column headers for the series and row headers for the labels.
 - Text is never drawn in a series color; colors identify series in marks, legend and tooltip only.
 

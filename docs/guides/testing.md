@@ -15,7 +15,7 @@ use Waypoint\Charts\ChartsPlugin;
 use Waypoint\Options\RendererOptions;
 use Waypoint\Testing\TestCase;
 
-final class ReportsTest extends TestCase
+final class SalesTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -26,22 +26,22 @@ final class ReportsTest extends TestCase
             $renderer->directory = __DIR__ . '/../views';
             $renderer->layout = '_Layout.php';
         });
-        $app->attach([ReportsController::class]);
+        $app->attach([SalesController::class]);
     }
 
-    public function testTheReportPageShowsTheChartWithItsTable(): void
+    public function testTheSalesPageShowsTheChartWithItsTable(): void
     {
-        $this->get('/reports')
+        $this->get('/sales')
             ->assertOk()
             ->assertSee('<figure class="wp-chart wp-chart-bar"')
-            ->assertSee('<figcaption class="wp-chart-title">Revenue 2026</figcaption>')
+            ->assertSee('<figcaption class="wp-chart-title">Sold this week</figcaption>')
             ->assertSee('<ul class="wp-chart-legend">')
-            ->assertSee('<th scope="row">Mar</th><td>165 €</td><td>70 €</td>');
+            ->assertSee('<th scope="row">Sat</th><td>140</td><td>96</td>');
     }
 
     public function testTheSvgRouteAnswersWithAnImage(): void
     {
-        $this->get('/reports/revenue.svg')
+        $this->get('/sales/week.svg')
             ->assertOk()
             ->assertContentType('image/svg+xml')
             ->assertSee('<svg xmlns="http://www.w3.org/2000/svg"')
@@ -53,33 +53,33 @@ final class ReportsTest extends TestCase
 The data table is the most stable thing to assert on: its rows hold the labels and the formatted values, independent of pixel positions. The page's `<script>` and `<link>` tags point to `/assets/charts.charts.<hash>.js` and `.css`; a test can follow them:
 
 ```php
-$page = $this->get('/reports')->assertOk();
+$page = $this->get('/sales')->assertOk();
 preg_match('#src="(/assets/charts\.charts\.[0-9a-f]{12}\.js)"#', $page->body(), $js);
 $this->get($js[1])->assertOk();
 ```
 
 ## Without an app
 
-A `Chart` needs nothing to be built and read back, which is what a test of a report service checks:
+A `Chart` needs nothing to be built and read back, which is what a test of a sales chart checks:
 
 ```php
 use PHPUnit\Framework\TestCase;
 use Waypoint\Charts\Chart;
 
-final class RevenueChartTest extends TestCase
+final class SalesChartTest extends TestCase
 {
-    public function testRowsOfTheSameMonthAndRegionAddUp(): void
+    public function testRowsOfTheSameDayAndProductAddUp(): void
     {
         $chart = Chart::fromRows([
-            ['month' => '2026-01', 'region' => 'North', 'revenue' => '120.50'],
-            ['month' => '2026-02', 'region' => 'North', 'revenue' => 140],
-            ['month' => '2026-02', 'region' => 'North', 'revenue' => 10],
-            ['month' => '2026-02', 'region' => 'South', 'revenue' => 80],
-        ], x: 'month', y: 'revenue', series: 'region');
+            ['day' => '15 Oct', 'product' => 'Croissant', 'quantity' => '88'],
+            ['day' => '16 Oct', 'product' => 'Croissant', 'quantity' => 90],
+            ['day' => '16 Oct', 'product' => 'Croissant', 'quantity' => 12],
+            ['day' => '16 Oct', 'product' => 'Pretzel', 'quantity' => 64],
+        ], x: 'day', y: 'quantity', series: 'product');
 
-        $this->assertSame(['2026-01', '2026-02'], $chart->getLabels());
+        $this->assertSame(['15 Oct', '16 Oct'], $chart->getLabels());
         $this->assertSame(
-            [['name' => 'North', 'values' => [120.5, 150.0]], ['name' => 'South', 'values' => [null, 80.0]]],
+            [['name' => 'Croissant', 'values' => [88.0, 102.0]], ['name' => 'Pretzel', 'values' => [null, 64.0]]],
             $chart->getSeries()
         );
     }
@@ -95,10 +95,10 @@ $options = new ChartsOptions();
 $options->format = fn(float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
 
 $svg = (new SvgRenderer($options))->renderStandalone(
-    Chart::line()->labels(['a', 'b'])->series('S', [1200.5, 1300])->unit('€', 2)
+    Chart::line()->labels(['Fri', 'Sat'])->series('Revenue', [1200.5, 1300])->unit('€', 2)
 );
 
-$this->assertStringContainsString('aria-label="b: S 1.300,00 €"', $svg);
+$this->assertStringContainsString('aria-label="Sat: Revenue 1.300,00 €"', $svg);
 ```
 
 The output is deterministic: the same chart and options always give the same markup, so a snapshot of `render()` stays stable until the chart, the options or the plugin change.

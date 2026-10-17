@@ -9,10 +9,10 @@ use InvalidArgumentException;
  *
  * ```php
  * $chart = Chart::bar()
- *     ->title('Revenue 2026')
- *     ->labels(['Jan', 'Feb', 'Mar'])
- *     ->series('Domestic', [120, 140, 165])
- *     ->unit('€');
+ *     ->title('Sold this week')
+ *     ->labels(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+ *     ->series('Croissants', [84, 76, 91, 88, 102, 140])
+ *     ->series('Pretzels', [60, 58, 64, 61, 75, 96]);
  * ```
  *
  * Return it from a route to get an image/svg+xml response, or pass it to

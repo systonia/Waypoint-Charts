@@ -12,8 +12,7 @@ use Waypoint\Charts\ChartsOptions;
 $app->configure(function (ChartsOptions $charts) {
     $charts->width = 720;
     $charts->height = 280;
-    $charts->format = fn(float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
-    $charts->tableLabel = 'Daten als Tabelle anzeigen';
+    $charts->maxBarWidth = 16;
 });
 ```
 
@@ -41,13 +40,22 @@ With `->unit('€', 2)` the value 1300 then reads `1.300,00 €`. With PHP's `in
 
 ```php
 $charts->format = function (float $value, int $decimals): string {
-    $formatter = new NumberFormatter('de_CH', NumberFormatter::DECIMAL);
+    $formatter = new NumberFormatter('de_DE', NumberFormatter::DECIMAL);
     $formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $decimals);
     return $formatter->format($value);
 };
 ```
 
-The closure is shared by every request of a long-running worker. It should depend only on its arguments, not on the current request.
+The closure is shared by every request of a long-running worker, so it must not capture anything of one request. It may ask a service that knows the current request's state. The bakery speaks English and German and writes the numbers of its sales charts in the visitor's language (from `app.php`):
+
+```php
+$app->configure(function (I18nOptions $i18n, ChartsOptions $charts, ExportOptions $export) use ($app) {
+    // …
+    $charts->format = fn (float $value, int $decimals): string => Format::number($value, $decimals, $app->get(Translator::class)->locale());
+});
+```
+
+`Translator::locale()` of the [I18n plugin](https://github.com/systonia/Waypoint-I18n) keeps the locale per request, so two requests a worker serves at once each get their own. `Format::number()` (in `src/Services/Format.php`) is `number_format($value, $decimals, ',', '.')` for `de` and `number_format($value, $decimals)` otherwise.
 
 ## The data table
 
@@ -56,7 +64,7 @@ The `<details>` with the data table is rendered under every chart by default. It
 ```php
 $charts->table = false;                          // no table under any chart
 $chart->withTable(false);                        // no table under this chart
-$charts->tableLabel = 'Daten als Tabelle anzeigen'; // the <summary> text
+$charts->tableLabel = 'Show the figures';         // the <summary> text
 ```
 
 A chart shows its table only when both the option and the chart say so. Without a table there is no tooltip from the script; the per-position `aria-label`s remain.

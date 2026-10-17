@@ -14,27 +14,32 @@ The layout renders the stylesheet and script with `$this->pluginAssetTags()`.
 
 ## Usage
 
+The sales page of Sonnenkorn, the bakery in the [Waypoint example app](https://github.com/systonia/Waypoint-Bakery),
+draws two charts from its sales report (from `src/Controllers/BackofficeController.php`):
+
 ```php
 use Waypoint\Charts\Chart;
 
-$chart = Chart::bar()
-    ->title('Revenue 2026')
-    ->labels(['Jan', 'Feb', 'Mar'])
-    ->series('Domestic', [120, 140, 165])
-    ->series('Export', [40, 55, 70])
+$revenue = Chart::fromRows($this->sales->revenueByDay(28, $locale), x: 'day', y: 'revenue')
+    ->title('Revenue per day, last four weeks')
     ->unit('€');
+
+$products = Chart::fromRows($this->sales->topProducts(28, $locale), x: 'product', y: 'quantity')
+    ->title('Sold in the last four weeks')
+    ->size(640, 280);
 ```
 
-- In a view: `{{ $this->chart($chart) }}` renders a `<figure>` with caption, the SVG, a legend (two
+- In a view: `{{ $this->chart($model->revenue) }}` renders a `<figure>` with caption, the SVG, a legend (two
   or more series) and the data table in a `<details>`.
-- From a route: `return $chart;` answers with `image/svg+xml` — use it as `<img src="/reports/revenue.svg">`
+- From a route: `return $chart;` answers with `image/svg+xml`. Use it as `<img src="/backoffice/sales/revenue.svg">`
   or inside a PDF; the SVG carries its own dark-mode styles.
-- From a query: `Chart::fromRows($rows, x: 'month', y: 'revenue', series: 'region')` pivots rows into
-  labels and series (duplicates add up).
+- From a query: `Chart::fromRows($rows, x: 'day', y: 'quantity', series: 'product')` pivots rows (arrays or
+  objects) into labels and series (duplicates add up).
+- By hand: `Chart::bar()->labels(['Mon', 'Tue'])->series('Croissants', [84, 76])->series('Pretzels', [60, 58])`.
 
 Builder options: `line()` or `bar()`, `stacked()` (bars), `markers(false)` (lines), `unit('€', decimals: 2)`,
 `description('...')` for the screen-reader sentence (generated from the data when omitted),
-`size(width, height)`, `withTable(false)`. At most eight series — fold the rest into "Other" or draw a
+`size(width, height)`, `withTable(false)`. At most eight series: fold the rest into "Other" or draw a
 second chart; never two value axes on one chart.
 
 ## What you get by design
