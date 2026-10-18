@@ -74,7 +74,7 @@ final class SvgRenderer
         $scale = LinearScale::nice($lo, $hi, 5);
         $tickDecimals = max($decimals, $scale->decimals());
         $ticks = $scale->ticks();
-        $tickLabels = array_map(fn(float $t): string => $this->fmt($t, $tickDecimals), $ticks);
+        $tickLabels = array_map(fn (float $t): string => $this->fmt($t, $tickDecimals), $ticks);
 
         $directLabel = $isBar && !$stacked && count($series) === 1;
         $endLabels = !$isBar && count($series) <= self::MAX_END_LABELS && count($series) > 0;
@@ -94,7 +94,7 @@ final class SvgRenderer
         $x1 = $w - $right;
         $y0 = $top;
         $y1 = $h - $bottom;
-        $y = fn(float $v): float => $scale->position($v, $y1, $y0);
+        $y = fn (float $v): float => $scale->position($v, $y1, $y0);
         $band = new BandScale($n, $x0, $x1 - $x0, $isBar ? 0.3 : 0.0);
 
         $ink = self::INK;
@@ -307,7 +307,7 @@ final class SvgRenderer
             }
         }
         $text = sprintf('%s chart with %d categories from %s to %s', $chart->type() === Chart::BAR ? 'Bar' : 'Line', count($labels), $labels[0] ?? '', $labels[count($labels) - 1] ?? '');
-        $names = array_filter(array_map(fn(array $s): string => $s['name'], $series));
+        $names = array_filter(array_map(fn (array $s): string => $s['name'], $series));
         if ($names !== []) {
             $text .= '; series: ' . implode(', ', $names);
         }
@@ -370,7 +370,7 @@ final class SvgRenderer
         $bottom = $top + $height;
         $rt = $roundTop ? $r : 0.0;
         $rb = $roundBottom ? $r : 0.0;
-        $corner = fn(float $cx, float $cy, float $ex, float $ey, bool $round): string => $round
+        $corner = fn (float $cx, float $cy, float $ex, float $ey, bool $round): string => $round
             ? sprintf('Q%s,%s %s,%s', self::n($cx), self::n($cy), self::n($ex), self::n($ey))
             : '';
         return sprintf('M%s,%s', self::n($x), self::n($top + $rt))

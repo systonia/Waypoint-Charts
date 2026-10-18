@@ -92,7 +92,7 @@ To check the drawing with particular options, create an [`SvgRenderer`](../refer
 use Waypoint\Charts\{Chart, ChartsOptions, SvgRenderer};
 
 $options = new ChartsOptions();
-$options->format = fn(float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
+$options->format = fn (float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
 
 $svg = (new SvgRenderer($options))->renderStandalone(
     Chart::line()->labels(['Fri', 'Sat'])->series('Revenue', [1200.5, 1300])->unit('€', 2)

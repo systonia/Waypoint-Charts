@@ -47,7 +47,7 @@ foreach ($top as $product => $values) {
     $chart->series($product, $values);
 }
 if ($other !== []) {
-    $chart->series('Other', array_map(fn(float|int|null ...$column) => array_sum($column), ...array_values($other)));
+    $chart->series('Other', array_map(fn (float|int|null ...$column) => array_sum($column), ...array_values($other)));
 }
 ```
 
@@ -88,7 +88,7 @@ A bar chart with exactly one series that is not stacked labels its highest bar w
 `Chart::line()` draws one 2-pixel line per series through the centers of the label slots, with an 8-pixel marker at every point. `markers(false)` leaves only the lines, which suits long series:
 
 ```php
-$days = array_map(fn(int $d): string => sprintf('%02d.10.', $d), range(1, 31));
+$days = array_map(fn (int $d): string => sprintf('%02d.10.', $d), range(1, 31));
 
 $chart = Chart::line()
     ->title('Orders per day, October')

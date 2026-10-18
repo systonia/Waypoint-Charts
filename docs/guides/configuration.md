@@ -33,7 +33,7 @@ $app->configure(function (ChartsOptions $charts) {
 The default is `number_format($value, $decimals)`: `1,234.5`. German notation:
 
 ```php
-$charts->format = fn(float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
+$charts->format = fn (float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
 ```
 
 With `->unit('€', 2)` the value 1300 then reads `1.300,00 €`. With PHP's `intl` extension, the closure can use a `NumberFormatter`:

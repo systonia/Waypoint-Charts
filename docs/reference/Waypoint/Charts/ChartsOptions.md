@@ -16,7 +16,7 @@ Settings for every chart the plugin draws.
 ```php
 $app->configure(function (ChartsOptions $charts) {
     $charts->height = 280;
-    $charts->format = fn(float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
+    $charts->format = fn (float $value, int $decimals): string => number_format($value, $decimals, ',', '.');
 });
 ```
 

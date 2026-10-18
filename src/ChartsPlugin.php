@@ -34,7 +34,7 @@ final class ChartsPlugin extends PluginBase implements ViewHelper, Renderer, Cli
 
     public function helpers(): array
     {
-        return ['chart' => fn(Chart $chart): Html => new Html($this->renderer->render($chart))];
+        return ['chart' => fn (Chart $chart): Html => new Html($this->renderer->render($chart))];
     }
 
     public function supports(mixed $result): bool

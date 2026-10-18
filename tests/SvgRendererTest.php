@@ -93,7 +93,7 @@ final class SvgRendererTest extends TestCase
 
     public function testXLabelsAreThinnedWhenTheyWouldOverlap(): void
     {
-        $labels = array_map(fn(int $i): string => "2026-01-" . str_pad((string) $i, 2, '0', STR_PAD_LEFT), range(1, 30));
+        $labels = array_map(fn (int $i): string => "2026-01-" . str_pad((string) $i, 2, '0', STR_PAD_LEFT), range(1, 30));
         $html = $this->renderer()->render(Chart::line()->labels($labels)->series('n', array_fill(0, 30, 1))->size(320, 200));
 
         $shown = substr_count($html, 'text-anchor="middle"');
@@ -104,7 +104,7 @@ final class SvgRendererTest extends TestCase
     public function testCustomFormatterAndUnitPlacement(): void
     {
         $html = $this->renderer(function (ChartsOptions $o) {
-            $o->format = fn(float $v, int $d): string => number_format($v, $d, ',', '.');
+            $o->format = fn (float $v, int $d): string => number_format($v, $d, ',', '.');
         })->render(Chart::bar()->labels(['x'])->series('n', [1234.5])->unit('€', 2));
 
         $this->assertStringContainsString('<td>1.234,50 €</td>', $html);
@@ -123,6 +123,6 @@ final class SvgRendererTest extends TestCase
     public function testTableCanBeSwitchedOffPerChartOrGlobally(): void
     {
         $this->assertStringNotContainsString('wp-chart-details', $this->renderer()->render($this->twoSeriesBars()->withTable(false)));
-        $this->assertStringNotContainsString('wp-chart-details', $this->renderer(fn(ChartsOptions $o) => $o->table = false)->render($this->twoSeriesBars()));
+        $this->assertStringNotContainsString('wp-chart-details', $this->renderer(fn (ChartsOptions $o) => $o->table = false)->render($this->twoSeriesBars()));
     }
 }

@@ -78,7 +78,7 @@ final class Chart
         $labels = [];
         $data = [];
         foreach ($rows as $row) {
-            $get = fn(string $key): mixed => is_array($row) ? ($row[$key] ?? null) : ($row->{$key} ?? null);
+            $get = fn (string $key): mixed => is_array($row) ? ($row[$key] ?? null) : ($row->{$key} ?? null);
             $label = (string) self::scalar($get($x));
             $name = $series === null ? '' : (string) self::scalar($get($series));
             $value = $get($y);
@@ -89,7 +89,7 @@ final class Chart
         }
         $chart->labels($labels);
         foreach ($data as $name => $byLabel) {
-            $chart->series((string) $name, array_map(fn(string $l): ?float => $byLabel[$l] ?? null, $labels));
+            $chart->series((string) $name, array_map(fn (string $l): ?float => $byLabel[$l] ?? null, $labels));
         }
         return $chart;
     }
@@ -121,7 +121,7 @@ final class Chart
         if (count($this->series) >= 8) {
             throw new InvalidArgumentException('A chart takes at most eight series; fold the rest into "Other" or draw a second chart.');
         }
-        $this->series[] = ['name' => $name, 'values' => array_map(fn(float|int|null $v): ?float => $v === null ? null : (float) $v, $values)];
+        $this->series[] = ['name' => $name, 'values' => array_map(fn (float|int|null $v): ?float => $v === null ? null : (float) $v, $values)];
         return $this;
     }
 
