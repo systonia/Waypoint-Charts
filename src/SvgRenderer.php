@@ -71,7 +71,7 @@ final class SvgRenderer
         $decimals = $chart->getDecimals();
 
         [$lo, $hi] = $this->extent($series, $stacked, $n);
-        $scale = LinearScale::nice($lo, $hi, 5);
+        $scale = LinearScale::nice($lo, $hi);
         $tickDecimals = max($decimals, $scale->decimals());
         $ticks = $scale->ticks();
         $tickLabels = array_map(fn (float $t): string => $this->fmt($t, $tickDecimals), $ticks);

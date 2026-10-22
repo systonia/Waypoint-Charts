@@ -15,13 +15,11 @@ final class LinearScale
     ) {
     }
 
-    /** Bounds around [$lo, $hi] on clean tick values, about $ticks intervals; $includeZero anchors the baseline. */
-    public static function nice(float $lo, float $hi, int $ticks = 5, bool $includeZero = true): self
+    /** Bounds around [$lo, $hi] and zero (the baseline) on clean tick values, about $ticks intervals. */
+    public static function nice(float $lo, float $hi, int $ticks = 5): self
     {
-        if ($includeZero) {
-            $lo = min($lo, 0.0);
-            $hi = max($hi, 0.0);
-        }
+        $lo = min($lo, 0.0);
+        $hi = max($hi, 0.0);
         if ($hi <= $lo) {
             $hi = $lo + 1.0;
         }

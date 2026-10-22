@@ -44,17 +44,16 @@ Distance between two ticks.
 ### nice()
 
 ```php
-public static function nice(float $lo, float $hi, int $ticks = 5, bool $includeZero = true): \Waypoint\Charts\Scale\LinearScale
+public static function nice(float $lo, float $hi, int $ticks = 5): \Waypoint\Charts\Scale\LinearScale
 ```
 
-Bounds around [$lo, $hi] on clean tick values, about $ticks intervals; $includeZero anchors the baseline.
+Bounds around [$lo, $hi] and zero (the baseline) on clean tick values, about $ticks intervals.
 
 **Parameters**
 
 - `$lo` `float`
 - `$hi` `float`
 - `$ticks` `int`
-- `$includeZero` `bool`
 
 **Returns** [`LinearScale`](LinearScale.md)
 

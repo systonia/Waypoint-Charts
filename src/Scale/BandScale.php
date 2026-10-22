@@ -13,7 +13,7 @@ final class BandScale
      * @param float $width Width of all slots together.
      * @param float $padding Share of a slot (0 to 1) left empty, split between both sides.
      */
-    public function __construct(private int $count, private float $start, float $width, private float $padding = 0.2)
+    public function __construct(int $count, private float $start, float $width, private float $padding = 0.2)
     {
         $this->band = $count > 0 ? $width / $count : $width;
     }
@@ -46,11 +46,5 @@ final class BandScale
     public function center(int $index): float
     {
         return $this->start($index) + $this->band / 2;
-    }
-
-    /** Number of slots. */
-    public function count(): int
-    {
-        return $this->count;
     }
 }

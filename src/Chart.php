@@ -79,8 +79,8 @@ final class Chart
         $data = [];
         foreach ($rows as $row) {
             $get = fn (string $key): mixed => is_array($row) ? ($row[$key] ?? null) : ($row->{$key} ?? null);
-            $label = (string) self::scalar($get($x));
-            $name = $series === null ? '' : (string) self::scalar($get($series));
+            $label = self::text($get($x));
+            $name = $series === null ? '' : self::text($get($series));
             $value = $get($y);
             if (!in_array($label, $labels, true)) {
                 $labels[] = $label;
@@ -242,8 +242,12 @@ final class Chart
         return $this->height;
     }
 
-    private static function scalar(mixed $value): string|int|float
+    /** A cell as label text; true and false become '1' and '0', anything else unprintable ''. */
+    private static function text(mixed $value): string
     {
-        return is_scalar($value) || $value instanceof \Stringable ? (is_bool($value) ? (int) $value : (is_string($value) || is_int($value) || is_float($value) ? $value : (string) $value)) : '';
+        if (is_bool($value)) {
+            return (string) (int) $value;
+        }
+        return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
     }
 }

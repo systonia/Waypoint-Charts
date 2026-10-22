@@ -19,7 +19,7 @@ Evenly spaced slots for categories along an axis, each with inner padding.
 
 ```php
 public function __construct(
-    private int $count,
+    int $count,
     private float $start,
     float $width,
     private float $padding = 0.2,
@@ -94,13 +94,3 @@ Center of slot $index.
 - `$index` `int`
 
 **Returns** `float`
-
-### count()
-
-```php
-public function count(): int
-```
-
-Number of slots.
-
-**Returns** `int`
